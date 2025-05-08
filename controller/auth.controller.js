@@ -48,10 +48,17 @@ exports.login = async (req, res) => {
     });
   }
 
-  const token = jwt.sign({ userId: user.id }, "secret", { expiresIn: "1h" });
-
-  return res.status(200).json({
-    message: "Login Successful",
-    token,
+  const token = jwt.sign({ userId: user.id }, process.env.SECRET, {
+    expiresIn: "1h",
   });
+
+  res
+    .status(200)
+    .cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 3600000, // 1 hour
+    })
+    .json({ message: "Login successful", token });
 };
