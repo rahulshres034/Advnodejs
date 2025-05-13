@@ -8,6 +8,7 @@ const blogRoute = require("./routes/blog.route");
 app.use(express.json());
 app.use(cookieParser()); // Required to parse cookies
 
+app.use(express.static("uploads/"));
 app.use("/api/auth", authRoute);
 app.use("/api/blog", blogRoute);
 

@@ -2,7 +2,9 @@ const { blogs } = require("../model");
 
 exports.createBlog = async (req, res) => {
   const { title, subtitle, description } = req.body;
-  if (!title || !subtitle || !description) {
+  const fileName = req.file.allBlogsfileName;
+
+  if (!title || !subtitle || !description || !req.file) {
     return res.status(400).json({
       message: "Please provide details",
     });
@@ -12,6 +14,7 @@ exports.createBlog = async (req, res) => {
     title,
     subtitle,
     description,
+    image: process.env.PROJECT_URL + fileName,
   });
 
   return res.status(201).json({
