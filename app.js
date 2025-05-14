@@ -12,6 +12,10 @@ app.use(express.static("uploads/"));
 app.use("/api/auth", authRoute);
 app.use("/api/blog", blogRoute);
 
+app.use((req, res, next) => {
+  res.locals.currentUser = req.cookies.token;
+});
+
 const PORT = 5000;
 app.listen(process.env.PORT, () => {
   console.log(`Starting on ${PORT}`);
