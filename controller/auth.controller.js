@@ -48,7 +48,7 @@ exports.login = async (req, res) => {
     });
   }
 
-  const token = jwt.sign({ userId: user.id }, process.env.SECRET, {
+  const token = jwt.sign({ id: user.id }, process.env.SECRET, {
     expiresIn: "1h",
   });
 
@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
 };
 
 exports.logOut = (req, res, next) => {
-  res.clearCookie("token");
+  res.clearCookie("jwtToken");
   res.status(200).json({
     message: "Logged Out",
   });

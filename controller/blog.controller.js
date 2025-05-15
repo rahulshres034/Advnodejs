@@ -2,7 +2,7 @@ const { blogs } = require("../model");
 
 exports.createBlog = async (req, res) => {
   const { title, subtitle, description } = req.body;
-  const fileName = req.file.allBlogsfileName;
+  const fileName = req.file.filename;
 
   if (!title || !subtitle || !description || !req.file) {
     return res.status(400).json({

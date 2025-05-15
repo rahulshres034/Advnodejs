@@ -14,9 +14,10 @@ app.use("/api/blog", blogRoute);
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.cookies.token;
+  next();
 });
 
-const PORT = 5000;
-app.listen(process.env.PORT, () => {
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
   console.log(`Starting on ${PORT}`);
 });
