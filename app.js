@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/auth.route");
 const blogRoute = require("./routes/blog.route");
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // Required to parse cookies
 
 app.use(express.static("uploads/"));
