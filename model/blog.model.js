@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     image: {
       type: DataTypes.STRING,
     },
+    userId: DataTypes.INTEGER, // this line is important!
   });
   return Blog;
 };

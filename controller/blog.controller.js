@@ -1,4 +1,6 @@
 const { blogs } = require("../model");
+const fs = require("fs");
+const path = require("path");
 
 exports.createBlog = async (req, res) => {
   const { title, subtitle, description } = req.body;
@@ -15,6 +17,7 @@ exports.createBlog = async (req, res) => {
     subtitle,
     description,
     image: process.env.PROJECT_URL + fileName,
+    userId: req.userId, // must be passed during blog creation
   });
 
   return res.status(201).json({
@@ -55,4 +58,69 @@ exports.getAllBlog = async (req, res) => {
     message: "all blogs",
     data: allBlogs,
   });
+};
+
+exports.editBlog = async (req, res) => {
+  const { id } = req.params;
+  const { title, subtitle, description } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ message: "Please provide a valid blog ID" });
+  }
+
+  try {
+    const oldData = await blogs.findOne({ where: { id } });
+
+    if (!oldData) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    let fileUrl = oldData.image;
+
+    // If a new image is uploaded
+    if (req.file) {
+      fileUrl = process.env.PROJECT_URL + req.file.filename;
+
+      // Delete the old image file
+      const oldImagePath = oldData.image;
+      const fileNameUploadFolder = oldImagePath.replace(
+        process.env.PROJECT_URL,
+        ""
+      );
+      const fullPath = path.join("uploads", fileNameUploadFolder);
+
+      fs.unlink(fullPath, (err) => {
+        if (err) {
+          console.error("Error deleting old image:", err);
+        } else {
+          console.log("Old image deleted successfully");
+        }
+      });
+    }
+
+    await blogs.update(
+      {
+        title,
+        subtitle,
+        description,
+        image: fileUrl,
+      },
+      {
+        where: { id },
+      }
+    );
+
+    const updatedBlog = await blogs.findOne({ where: { id } });
+
+    return res.status(200).json({
+      message: "Blog updated successfully",
+      data: updatedBlog,
+    });
+  } catch (error) {
+    console.error("Error updating blog:", error);
+    return res.status(500).json({
+      message: "An error occurred while updating the blog",
+      error: error.message,
+    });
+  }
 };
